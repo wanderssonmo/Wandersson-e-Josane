@@ -1,10 +1,11 @@
 :root {
     --bg-dark: #0b0b0b;
     --gold: #d09d5b;
+    --gold-bright: #e4b062; /* Dourado mais vivo para números */
     --gold-glow: rgba(208, 157, 91, 0.4);
-    --red-soft: #c7473c;
+    --red-soft: #c7473c; /* Vermelho ajustado para melhor contraste */
     --text-light: #f5f5f5;
-    --glass-overlay: rgba(0, 0, 0, 0.7);
+    --glass-overlay: rgba(0, 0, 0, 0.75); /* Escureci um pouco mais para ler melhor o texto */
 }
 
 /* Reset básico */
@@ -22,10 +23,10 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden; /* Evita scroll por causa dos fogos */
+    overflow: hidden; 
 }
 
-/* Canvas ao fundo */
+/* Canvas ao fundo - Mantive em z-index 1 para não cobrir o texto */
 #fireworks {
     position: fixed;
     top: 0;
@@ -46,7 +47,8 @@ body {
 }
 
 .card {
-    background: linear-gradient(var(--glass-overlay), var(--glass-overlay)), url('foto.png');
+    /* Melhoria no gradiente: escurece o centro para destacar o texto */
+    background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%), url('foto.png');
     background-size: cover;
     background-position: center;
     
@@ -54,11 +56,11 @@ body {
     max-width: 550px;
     padding: 3rem 2rem;
     border-radius: 28px;
-    border: 1px solid rgba(208, 157, 91, 0.2);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(208, 157, 91, 0.25);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
     
     text-align: center;
-    backdrop-filter: blur(4px); /* Suaviza o fundo para leitura */
+    backdrop-filter: blur(6px); /* Aumentei o blur para separar a foto do texto */
 }
 
 /* Cabeçalho */
@@ -75,16 +77,21 @@ body {
     letter-spacing: 2px;
     margin-bottom: 0.5rem;
     line-height: 1.1;
+    /* Sombra leve para garantir leitura sobre qualquer cor da foto */
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
 
 .sub-title {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     margin-bottom: 2rem;
+    color: #e0e0e0;
 }
 
 .sub-title strong {
-    color: var(--red-soft);
-    font-weight: 600;
+    color: rgb(233, 193, 61);
+    font-weight: 700;
+    /* Pequeno brilho para o vermelho não "sumir" no escuro */
+    text-shadow: 0 0 5px rgba(199, 71, 60, 0.2);
 }
 
 /* Contador */
@@ -96,69 +103,108 @@ body {
 }
 
 .time {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid var(--gold-glow);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(208, 157, 91, 0.3);
     padding: 15px 5px;
     border-radius: 16px;
-    transition: transform 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 .time:hover {
     transform: translateY(-5px);
-    background: rgba(208, 157, 91, 0.15);
+    background: rgba(208, 157, 91, 0.12);
+    border-color: var(--gold);
 }
 
 .time span {
     display: block;
-    font-size: 1.8rem;
+    font-size: 1.85rem;
     font-weight: 800;
-    color: var(--gold);
+    color: var(--gold-bright); /* Usei o dourado mais vivo aqui */
     line-height: 1;
+    text-shadow: 0 0 10px rgba(228, 176, 98, 0.3);
 }
 
 .time small {
     font-size: 0.65rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    opacity: 0.8;
+    color: var(--text-light);
+    opacity: 0.7;
+    margin-top: 5px;
+    display: block;
 }
 
 /* Mensagem */
 .card-message {
     margin-bottom: 2.5rem;
+    line-height: 1.6; /* Melhor espaçamento para leitura */
 }
 
 .card-message p {
     font-size: 1.05rem;
     margin-bottom: 8px;
-    opacity: 0.9;
+    color: #f0f0f0;
 }
 
 .highlight {
     font-weight: 600;
-    color: var(--text-light);
+    color: var(--gold); /* Troquei para dourado para fechar a harmonia */
 }
 
 /* Rodapé */
 .card-footer {
     padding-top: 1.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 0.85rem;
-    opacity: 0.8;
+    font-size: 2.65rem;
 }
 
 .card-footer a {
-    color: var(--gold);
+    color: #E1306C;
     text-decoration: none;
     font-weight: bold;
-    transition: color 0.3s;
+    transition: all 0.3s;
+    padding: 2px 5px;
 }
 
 .card-footer a:hover {
-    color: var(--text-light);
+    color: #fff;
+    background: rgba(208, 157, 91, 0.2);
+    border-radius: 4px;
 }
 
-/* Ajustes para telas muito pequenas */
+.card-footer {
+    text-align: center;
+    padding: 15px;
+    font-size: 0.9rem;
+}
+
+.instagram-link {
+    color: #E1306C;
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.instagram-link:hover {
+    text-decoration: underline;
+    opacity: 0.9;
+}
+
+.instagram-link i {
+    font-size: 1rem;
+}
+
+
+/* Ajustes para celulares */
+@media (max-width: 450px) {
+    .card { padding: 2rem 1.5rem; }
+    .countdown-grid { gap: 8px; }
+    .time span { font-size: 1.5rem; }
+}
+
 @media (max-width: 400px) {
     .countdown-grid {
         grid-template-columns: repeat(2, 1fr);
