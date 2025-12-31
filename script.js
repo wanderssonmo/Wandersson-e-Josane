@@ -1,6 +1,4 @@
-/* ========= CONTAGEM REGRESSIVA ========= */
 document.addEventListener("DOMContentLoaded", () => {
-
     /* ========= CONTAGEM REGRESSIVA ========= */
     const countdownEl = document.getElementById("countdown");
 
@@ -10,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const diff = alvo - agora;
 
         if (diff <= 0) {
-            countdownEl.innerHTML = "<strong>🎆 Feliz Ano Novo! 🎆</strong>";
+            countdownEl.innerHTML = "<h2 style='color: var(--gold)'>🎆 Feliz Ano Novo 2026! 🎆</h2>";
             return;
         }
 
@@ -27,10 +25,10 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
     }
 
-    atualizarContagem();
     setInterval(atualizarContagem, 1000);
+    atualizarContagem();
 
-    /* ========= FOGOS DE ARTIFÍCIO ========= */
+    /* ========= FOGOS DE ARTIFÍCIO INTERATIVOS ========= */
     const canvas = document.getElementById("fireworks");
     const ctx = canvas.getContext("2d");
 
@@ -38,50 +36,61 @@ document.addEventListener("DOMContentLoaded", () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
     }
-    resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
 
     let particles = [];
 
     class Particle {
-        constructor(x, y) {
+        constructor(x, y, color) {
             this.x = x;
             this.y = y;
+            this.color = color || `hsl(${Math.random() * 360}, 100%, 60%)`;
             this.vx = Math.random() * 6 - 3;
-            this.vy = Math.random() * -6 - 2;
-            this.life = 60;
-            this.color = `hsl(${Math.random() * 360},100%,60%)`;
+            this.vy = Math.random() * 6 - 3;
+            this.life = 1.0;
+            this.decay = Math.random() * 0.02 + 0.015;
         }
+
         update() {
             this.x += this.vx;
             this.y += this.vy;
-            this.vy += 0.15;
-            this.life--;
+            this.vy += 0.05; // gravidade
+            this.life -= this.decay;
         }
+
         draw() {
-            ctx.globalAlpha = this.life / 60;
-            ctx.fillStyle = this.color;
             ctx.beginPath();
-            ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+            ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+            ctx.fillStyle = this.color;
+            ctx.globalAlpha = this.life;
             ctx.fill();
-            ctx.globalAlpha = 1;
         }
     }
 
     function explode(x, y) {
-        for (let i = 0; i < 40; i++) {
-            particles.push(new Particle(x, y));
-        }
+    // Escolhe aleatoriamente entre Dourado e Vermelho para combinar com a marca
+    const colors = ['#d09d5b', '#c7473c', '#ffffff', '#ffdfba'];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    
+    for (let i = 0; i < 50; i++) {
+        particles.push(new Particle(x, y, color));
     }
+}
+
+    // Explodir ao clicar
+    canvas.addEventListener("mousedown", (e) => {
+        explode(e.clientX, e.clientY);
+    });
 
     function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Efeito de rastro: em vez de limpar tudo, desenha um fundo preto semi-transparente
+        ctx.fillStyle = "rgba(11, 11, 11, 0.2)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        if (Math.random() < 0.035) {
-            explode(
-                Math.random() * canvas.width,
-                Math.random() * canvas.height * 0.5
-            );
+        // Fogos automáticos ocasionais
+        if (Math.random() < 0.03) {
+            explode(Math.random() * canvas.width, Math.random() * canvas.height * 0.7);
         }
 
         particles = particles.filter(p => p.life > 0);
