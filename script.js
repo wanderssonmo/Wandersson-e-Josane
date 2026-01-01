@@ -1,34 +1,79 @@
 document.addEventListener("DOMContentLoaded", () => {
-    /* ========= CONTAGEM REGRESSIVA ========= */
+
+    /* =====================================================
+       CRONÔMETRO DO ANO 2026 (TEMPO DECORRIDO)
+    ===================================================== */
+
     const countdownEl = document.getElementById("countdown");
+    const marcoEl = document.getElementById("marco"); // opcional
 
-    function atualizarContagem() {
-        const agora = new Date();
-        const alvo = new Date("2026-01-01T00:00:00-03:00");
-        const diff = alvo - agora;
+    const inicio2026 = new Date(2026, 0, 1, 0, 0, 0); 
+    // new Date(ano, mês, dia...) → usa automaticamente o fuso local
 
-        if (diff <= 0) {
-            countdownEl.innerHTML = "<h2 style='color: var(--gold)'>🎆 Feliz Ano Novo 2026! 🎆</h2>";
-            return;
-        }
+    let ultimoMarco = 0;
 
-        const d = Math.floor(diff / 86400000);
-        const h = Math.floor(diff / 3600000) % 24;
-        const m = Math.floor(diff / 60000) % 60;
-        const s = Math.floor(diff / 1000) % 60;
-
-        countdownEl.innerHTML = `
-            <div class="time"><span>${d}</span><small>Dias</small></div>
-            <div class="time"><span>${h}</span><small>Horas</small></div>
-            <div class="time"><span>${m}</span><small>Min</small></div>
-            <div class="time"><span>${s}</span><small>Seg</small></div>
+    function criarBloco(valor, label) {
+        return `
+            <div class="time">
+                <span class="flip">${valor}</span>
+                <small>${label}</small>
+            </div>
         `;
     }
 
-    setInterval(atualizarContagem, 1000);
-    atualizarContagem();
+    function atualizarCronometro() {
+        const agora = new Date();
+        const diff = agora - inicio2026;
 
-    /* ========= FOGOS DE ARTIFÍCIO INTERATIVOS ========= */
+        // Antes de 2026
+        if (diff < 0) {
+            countdownEl.innerHTML = `
+                <h2 style="color: var(--gold)">⏳ Aguardando 2026...</h2>
+            `;
+            return;
+        }
+
+        const dias = Math.floor(diff / 86400000);
+        const horas = Math.floor(diff / 3600000) % 24;
+        const minutos = Math.floor(diff / 60000) % 60;
+        const segundos = Math.floor(diff / 1000) % 60;
+
+        countdownEl.innerHTML = `
+            ${criarBloco(dias, "Dias")}
+            ${criarBloco(horas, "Horas")}
+            ${criarBloco(minutos, "Min")}
+            ${criarBloco(segundos, "Seg")}
+        `;
+
+        verificarMarcos(dias);
+    }
+
+    function verificarMarcos(dias) {
+        const marcos = [100, 200, 365];
+
+        marcos.forEach(marco => {
+            if (dias >= marco && ultimoMarco < marco) {
+                ultimoMarco = marco;
+
+                if (marcoEl) {
+                    marcoEl.innerHTML = `🎉 ${marco} dias de 2026 completados!`;
+                    marcoEl.classList.add("ativo");
+                }
+
+                // Explosão especial no centro
+                explode(window.innerWidth / 2, window.innerHeight / 3);
+            }
+        });
+    }
+
+    setInterval(atualizarCronometro, 1000);
+    atualizarCronometro();
+
+
+    /* =====================================================
+       FOGOS DE ARTIFÍCIO INTERATIVOS
+    ===================================================== */
+
     const canvas = document.getElementById("fireworks");
     const ctx = canvas.getContext("2d");
 
@@ -36,6 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
     }
+
     window.addEventListener("resize", resizeCanvas);
     resizeCanvas();
 
@@ -45,17 +91,17 @@ document.addEventListener("DOMContentLoaded", () => {
         constructor(x, y, color) {
             this.x = x;
             this.y = y;
-            this.color = color || `hsl(${Math.random() * 360}, 100%, 60%)`;
+            this.color = color;
             this.vx = Math.random() * 6 - 3;
             this.vy = Math.random() * 6 - 3;
-            this.life = 1.0;
+            this.life = 1;
             this.decay = Math.random() * 0.02 + 0.015;
         }
 
         update() {
             this.x += this.vx;
             this.y += this.vy;
-            this.vy += 0.05; // gravidade
+            this.vy += 0.05;
             this.life -= this.decay;
         }
 
@@ -65,32 +111,32 @@ document.addEventListener("DOMContentLoaded", () => {
             ctx.fillStyle = this.color;
             ctx.globalAlpha = this.life;
             ctx.fill();
+            ctx.globalAlpha = 1;
         }
     }
 
     function explode(x, y) {
-    // Escolhe aleatoriamente entre Dourado e Vermelho para combinar com a marca
-    const colors = ['#d09d5b', '#c7473c', '#ffffff', '#ffdfba'];
-    const color = colors[Math.floor(Math.random() * colors.length)];
-    
-    for (let i = 0; i < 50; i++) {
-        particles.push(new Particle(x, y, color));
-    }
-}
+        const colors = ['#d09d5b', '#c7473c', '#ffffff', '#ffdfba'];
 
-    // Explodir ao clicar
+        for (let i = 0; i < 50; i++) {
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            particles.push(new Particle(x, y, color));
+        }
+    }
+
     canvas.addEventListener("mousedown", (e) => {
         explode(e.clientX, e.clientY);
     });
 
     function animate() {
-        // Efeito de rastro: em vez de limpar tudo, desenha um fundo preto semi-transparente
-        ctx.fillStyle = "rgba(11, 11, 11, 0.2)";
+        ctx.fillStyle = "rgba(11, 11, 11, 0.25)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Fogos automáticos ocasionais
         if (Math.random() < 0.03) {
-            explode(Math.random() * canvas.width, Math.random() * canvas.height * 0.7);
+            explode(
+                Math.random() * canvas.width,
+                Math.random() * canvas.height * 0.6
+            );
         }
 
         particles = particles.filter(p => p.life > 0);
@@ -103,4 +149,5 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     animate();
+
 });
