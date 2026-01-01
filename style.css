@@ -63,6 +63,24 @@ body {
     backdrop-filter: blur(6px); /* Aumentei o blur para separar a foto do texto */
 }
 
+/* Mensagem Macro */
+.marco {
+    margin-top: 14px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--gold);
+    text-align: center;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.5s ease;
+}
+
+.marco.ativo {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
 /* Cabeçalho */
 .logo {
     max-width: 100px;
